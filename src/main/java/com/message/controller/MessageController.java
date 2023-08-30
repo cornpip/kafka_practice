@@ -32,9 +32,9 @@ public class MessageController {
     @MessageMapping("/chat/test")
     public void message(MessageTestDto msg) {
         log.info(msg.toString());
-        CompletableFuture<SendResult<Integer, String>> future = kafkaTemplate.send(MSG_TOPIC, "send success");
+        CompletableFuture<SendResult<Integer, String>> future = kafkaTemplate.send(MSG_TOPIC, 1, "send success");
         future.whenComplete((result, ex) -> {
-            System.out.println(result.getProducerRecord().value());
+            System.out.println("future : " + result.getProducerRecord().value());
         });
 //                messagingTemplate.convertAndSend("/sub/chat/room/" + msg.getChannelId(), msg);
     }
@@ -48,5 +48,10 @@ public class MessageController {
         }
         MessageResponseDto responseDto = new MessageResponseDto(requestDto);
         messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getChannelId(), responseDto);
+    }
+
+    @KafkaListener(id = "foo", topics = MSG_TOPIC, clientIdPrefix = "myClientId")
+    public void listen(String data) {
+        System.out.println(data);
     }
 }
