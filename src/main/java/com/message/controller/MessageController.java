@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.message.kafka.TopicConfig.MSG_TOPIC;
+import static com.message.kafka.KafKaConstant.MSG_TOPIC;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,11 +32,12 @@ public class MessageController {
     @MessageMapping("/chat/test")
     public void message(MessageTestDto msg) {
         log.info(msg.toString());
-        CompletableFuture<SendResult<Integer, String>> future = kafkaTemplate.send(MSG_TOPIC, 1, "send success");
+        Integer key = Integer.parseInt(msg.getChannelId());
+        CompletableFuture<SendResult<Integer, String>> future = kafkaTemplate.send(MSG_TOPIC, key, msg.getMsg());
         future.whenComplete((result, ex) -> {
             System.out.println("future : " + result.getProducerRecord().value());
         });
-        System.out.println("whenComplete 보다 먼저 동작하는 거 확인");
+        System.out.println("Non-blocking 확인");
 //                messagingTemplate.convertAndSend("/sub/chat/room/" + msg.getChannelId(), msg);
     }
 

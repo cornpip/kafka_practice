@@ -16,6 +16,8 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.message.kafka.KafKaConstant.*;
+
 @Configuration
 @EnableKafka
 public class MsgListenerContainerFactory {
@@ -40,7 +42,7 @@ public class MsgListenerContainerFactory {
     @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKER_SERVER);
 //        props.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP1); //리스너에 id 설정하면 빼야 에러안남
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
