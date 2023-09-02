@@ -36,6 +36,7 @@ public class MessageController {
         future.whenComplete((result, ex) -> {
             System.out.println("future : " + result.getProducerRecord().value());
         });
+        System.out.println("whenComplete 보다 먼저 동작하는 거 확인");
 //                messagingTemplate.convertAndSend("/sub/chat/room/" + msg.getChannelId(), msg);
     }
 
