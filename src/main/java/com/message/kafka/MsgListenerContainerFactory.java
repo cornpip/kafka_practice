@@ -21,7 +21,6 @@ import static com.message.kafka.KafKaConstant.*;
 @Configuration
 @EnableKafka
 public class MsgListenerContainerFactory {
-    public final String GROUP1 = "ConsumerGroup1";
 
     @Bean
     KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>>
@@ -46,7 +45,7 @@ public class MsgListenerContainerFactory {
 //        props.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP1); //리스너에 id 설정하면 빼야 에러안남
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return props;
     }
 }

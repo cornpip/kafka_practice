@@ -7,7 +7,10 @@ import com.message.kafka.TopicConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.PartitionOffset;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -52,8 +55,11 @@ public class MessageController {
         messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getChannelId(), responseDto);
     }
 
-    @KafkaListener(id = "foo", topics = MSG_TOPIC, clientIdPrefix = "myClientId")
-    public void listen(String data) {
-        System.out.println(data);
+    @KafkaListener(id = "foo", topics = MSG_TOPIC, clientIdPrefix = "myClientId", topicPartitions =
+            { @TopicPartition(topic = MSG_TOPIC, partitionOffsets = @PartitionOffset(partition = "0-9", initialOffset = "0"))}
+    )
+    public void listen(ConsumerRecord<Integer, String> record) {
+//        System.out.println(data);
+        System.out.println(record);
     }
 }
