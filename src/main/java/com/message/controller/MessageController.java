@@ -34,14 +34,13 @@ public class MessageController {
     @Async
     @MessageMapping("/chat/test")
     public void message(MessageTestDto msg) {
-        log.info(msg.toString());
+//        log.info(msg.toString());
         Integer key = Integer.parseInt(msg.getChannelId());
         CompletableFuture<SendResult<Integer, String>> future = kafkaTemplate.send(MSG_TOPIC, key, msg.getMsg());
         future.whenComplete((result, ex) -> {
-            System.out.println("future : " + result.getProducerRecord().value());
+            System.out.println("complete cb : " + result.getProducerRecord().value());
         });
         System.out.println("Non-blocking 확인");
-//                messagingTemplate.convertAndSend("/sub/chat/room/" + msg.getChannelId(), msg);
     }
 
 
@@ -55,11 +54,12 @@ public class MessageController {
         messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getChannelId(), responseDto);
     }
 
-    @KafkaListener(id = "foo", topics = MSG_TOPIC, clientIdPrefix = "myClientId", topicPartitions =
-            { @TopicPartition(topic = MSG_TOPIC, partitionOffsets = @PartitionOffset(partition = "0-9", initialOffset = "0"))}
+    @KafkaListener(id = "#{T(java.util.UUID).randomUUID().toString()}", topics = MSG_TOPIC, clientIdPrefix = "myClientId", topicPartitions =
+            {@TopicPartition(topic = MSG_TOPIC, partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0"))}
     )
     public void listen(ConsumerRecord<Integer, String> record) {
 //        System.out.println(data);
-        System.out.println(record);
+        System.out.println("consumer : " + record);
+        messagingTemplate.convertAndSend("/sub/chat/room/" + record.key(), record.value());
     }
 }

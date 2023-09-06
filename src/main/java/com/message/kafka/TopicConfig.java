@@ -1,7 +1,5 @@
 package com.message.kafka;
 
-import jakarta.annotation.PostConstruct;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -29,7 +27,8 @@ public class TopicConfig {
     @Bean
     public NewTopic messageTopic() {
         return TopicBuilder.name(MSG_TOPIC)
-                .partitions(10)
+                // consumer 가 하나이므로 일단 partition 하나로
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
