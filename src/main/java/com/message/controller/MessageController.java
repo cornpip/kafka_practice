@@ -54,6 +54,15 @@ public class MessageController {
         messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getChannelId(), responseDto);
     }
 
+    /**
+     * consumer 는 consumer group 에 속해 있고
+     * 1개의 partition 은 consumer group 의 하나의 consumer 에만 연결 가능 하다.
+     * 그래서 모든 ws-server 의 consumer 는 group-id 가 전부 달라야 한다.
+     * ex)
+     * ws1 ws2 2개의 consumer 가 같은 group-id 라면
+     * 1개의 partition 은 하나의 ws 서버에서만 consume 하게 된다.
+     * (현재 아키텍처에서 모든 ws 서버가 같은 partition 을 consume 해야 하므로 id = random 으로 지정 한다.)
+     */
     @KafkaListener(id = "#{T(java.util.UUID).randomUUID().toString()}", topics = MSG_TOPIC, clientIdPrefix = "myClientId", topicPartitions =
             {@TopicPartition(topic = MSG_TOPIC, partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0"))}
     )
